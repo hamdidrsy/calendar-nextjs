@@ -1,0 +1,32 @@
+/**
+ * Base Styles
+ * Temel HTML elementleri için stiller
+ */
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    line-height: 1.5;
+}
+
+/* Root Container */
+#root {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--space-3xl);
+}
+
+/* Focus Visible */
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+    background-color: var(--color-primary-light);
+    color: var(--color-text);
+}

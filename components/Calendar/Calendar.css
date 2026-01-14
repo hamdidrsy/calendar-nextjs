@@ -1,0 +1,303 @@
+/* ===== GENEL AYARLAR ===== */
+.calendar {
+    /* Genişliği artırdık */
+    max-width: 700px;
+    margin: 40px auto;
+    /* Modern font ailesi */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #ffffff;
+    /* Keskin çizgiler yerine yumuşak gölge */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #f0f0f0;
+}
+
+/* ===== HEADER (SADELEŞTİRİLDİ) ===== */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px 30px 20px;
+    /* Alt boşluk artırıldı */
+    background-color: transparent;
+    /* Renkli arka plan kaldırıldı */
+    color: #333;
+}
+
+.calendar-header h2 {
+    margin: 0;
+    font-size: 24px;
+    /* Başlık büyütüldü */
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.calendar-header button {
+    background: #f7f7f7;
+    border: none;
+    color: #333;
+    font-size: 18px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    /* Butonlar yuvarlak yapıldı */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.calendar-header button:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+}
+
+/* ===== HAFTA GÜNLERİ ===== */
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 10px;
+    border: none;
+    background-color: transparent;
+}
+
+.weekday {
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: #999;
+    /* Daha silik, gri ton */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-bottom: 15px;
+}
+
+/* ===== GÜNLER GRID ===== */
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    /* Günler arasına boşluk eklendi */
+}
+
+.day {
+    aspect-ratio: 1 / 1;
+    /* Tam kare olması için */
+    min-height: 80px;
+    /* Yükseklik artırıldı */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 8px;
+    font-size: 18px;
+    color: #333;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: 1px solid transparent;
+    /* Varsayılan border yok */
+    overflow: hidden;
+}
+
+/* Hover Efekti */
+.day:hover:not(.other-month) {
+    background-color: #f7f7f7;
+    color: #000;
+}
+
+/* Bugün (Vurgu Rengi: Siyah veya Koyu Gri - Minimalist) */
+.day.today {
+    background-color: #222;
+    /* Koyu gri/siyah arka plan */
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Diğer aylar */
+.day.other-month {
+    color: #e0e0e0;
+    pointer-events: none;
+    /* Tıklanmasın istersen */
+}
+
+/* Seçili gün */
+.day.selected {
+    background-color: #4a90d9;
+    color: white;
+    font-weight: bold;
+    border: 2px solid #2e6ab3;
+}
+
+/* Bugün + Seçili (aynı anda) */
+.day.today.selected {
+    background-color: #4a90d9;
+    box-shadow: 0 4px 10px rgba(74, 144, 217, 0.4);
+}
+
+/* ===== CALENDAR ACTIONS ===== */
+.calendar-actions {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0 10px 0;
+}
+
+.btn-add-event {
+    background-color: #4a90d9;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-add-event:hover {
+    background-color: #3a7bc8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 144, 217, 0.3);
+}
+
+.btn-add-event:active {
+    transform: translateY(0);
+}
+
+/* ===== GÜN NUMARASI ===== */
+.day-number {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* ===== ETKİNLİKLER ===== */
+.day-events {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+    flex: 1;
+}
+
+.day-event {
+    background-color: #e8f4fd;
+    border-left: 3px solid #4a90d9;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #333;
+}
+
+.day-event .event-time {
+    color: #666;
+    margin-right: 4px;
+    font-weight: 500;
+}
+
+.day-event .event-title {
+    font-weight: 500;
+}
+
+/* Seçili gündeki etkinlikler */
+.day.selected .day-event {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-left-color: white;
+    color: white;
+}
+
+.day.selected .day-event .event-time {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Bugün gündeki etkinlikler */
+.day.today .day-event {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-left-color: white;
+    color: white;
+}
+
+.day.today .day-event .event-time {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Etkinliklere hover efekti */
+.day-event:hover {
+    filter: brightness(0.95);
+    cursor: pointer;
+}
+
+/* ===== ETKİNLİK DETAY MODAL ===== */
+.event-detail {
+    padding: 10px 0;
+}
+
+.event-detail-title {
+    margin: 0 0 20px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.event-detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.event-detail-row {
+    display: flex;
+    gap: 8px;
+}
+
+.event-detail-label {
+    font-weight: 600;
+    color: #666;
+    min-width: 80px;
+}
+
+.event-detail-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+.btn-cancel {
+    background-color: #f0f0f0;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}

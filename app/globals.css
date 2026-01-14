@@ -1,0 +1,165 @@
+/**
+ * Next.js Takvim Uygulaması Global Stilleri
+ */
+
+/* ===== CSS VARIABLES ===== */
+:root {
+    /* Ana Renkler */
+    --color-primary: #4a90d9;
+    --color-primary-hover: #3a7bc8;
+    --color-primary-light: #e8f4fd;
+    --color-primary-shadow: rgba(74, 144, 217, 0.3);
+
+    /* Durum Renkleri */
+    --color-success: #27ae60;
+    --color-danger: #e74c3c;
+    --color-danger-hover: #c0392b;
+    --color-warning: #f39c12;
+    --color-error-bg: #ffebee;
+    --color-error-text: #e53935;
+
+    /* Nötr Renkler */
+    --color-white: #ffffff;
+    --color-black: #222222;
+    --color-text: #333333;
+    --color-text-light: #666666;
+    --color-text-muted: #999999;
+    --color-border: #e0e0e0;
+    --color-border-light: #f0f0f0;
+    --color-bg: #f7f7f7;
+    --color-bg-hover: #e0e0e0;
+
+    /* Spacing */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 20px;
+    --space-2xl: 24px;
+    --space-3xl: 32px;
+    --space-4xl: 40px;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 50%;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.08);
+    --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.2);
+
+    /* Typography */
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-size-xs: 10px;
+    --font-size-sm: 12px;
+    --font-size-md: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 18px;
+    --font-size-2xl: 20px;
+    --font-size-3xl: 24px;
+
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.2s ease;
+    --transition-slow: 0.3s ease;
+
+    /* Z-Index */
+    --z-dropdown: 100;
+    --z-modal: 1000;
+    --z-tooltip: 1100;
+}
+
+/* ===== CSS RESET ===== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    min-height: 100vh;
+    font-family: var(--font-family);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    line-height: 1.5;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+/* ===== BASE STYLES ===== */
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+::selection {
+    background-color: var(--color-primary-light);
+    color: var(--color-text);
+}
+
+/* Main container */
+main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--space-3xl);
+}

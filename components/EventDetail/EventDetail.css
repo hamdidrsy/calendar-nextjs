@@ -1,0 +1,69 @@
+/* EventDetail Bileşeni Stilleri */
+.event-detail {
+    padding: 10px 0;
+}
+
+.event-detail-title {
+    margin: 0 0 20px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.event-detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.event-detail-row {
+    display: flex;
+    gap: 8px;
+}
+
+.event-detail-label {
+    font-weight: 600;
+    color: #666;
+    min-width: 80px;
+}
+
+.event-detail-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+.event-detail-actions .btn-cancel {
+    background-color: #f0f0f0;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.event-detail-actions .btn-cancel:hover {
+    background-color: #e0e0e0;
+}
+
+.event-detail-actions .btn-delete {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.event-detail-actions .btn-delete:hover {
+    background-color: #c0392b;
+}
