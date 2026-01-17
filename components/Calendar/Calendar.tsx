@@ -1,10 +1,11 @@
 "use client"
 
 import React, { useState } from 'react';
-import { useCalendar, useEvents, useModal } from '@/hooks';
+import { useCalendar, useEvents, useModal, useToast } from '@/hooks';
 import { Modal } from '@/components/Modal';
 import { EventForm } from '@/components/EventForm';
 import { EventDetail } from '@/components/EventDetail';
+import { LoadingSpinner, ErrorMessage, ToastContainer } from '@/components/ui';
 import { CalendarHeader } from './CalendarHeader';
 import { WeekDays } from './WeekDays';
 import { CalendarGrid } from './CalendarGrid';
@@ -23,7 +24,10 @@ export const Calendar: React.FC = () => {
     } = useCalendar();
 
     // Etkinlik yönetimi hook'u
-    const { addEvent, deleteEvent, getEventsForDate } = useEvents();
+    const { addEvent, deleteEvent, getEventsForDate, isLoading, error, clearError, refresh } = useEvents();
+
+    // Toast bildirimleri
+    const { toasts, hideToast, success, error: showError } = useToast();
 
     // Modal state'leri
     const addEventModal = useModal();
@@ -31,9 +35,17 @@ export const Calendar: React.FC = () => {
     const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
 
     // Etkinlik ekleme handler'ı
-    const handleAddEvent = (event: CalendarEvent) => {
-        addEvent(event);
-        addEventModal.close();
+    const handleAddEvent = async (event: CalendarEvent) => {
+        try {
+            // id hariç event bilgilerini gönder (API id'yi oluşturacak)
+            const { id, ...eventData } = event;
+            await addEvent(eventData);
+            addEventModal.close();
+            success('Etkinlik basariyla eklendi!');
+        } catch (err) {
+            showError('Etkinlik eklenirken hata olustu');
+            console.error('Etkinlik eklenirken hata:', err);
+        }
     };
 
     // Gune cift tiklama handler'i - modal'i acar
@@ -48,15 +60,39 @@ export const Calendar: React.FC = () => {
     };
 
     // Etkinlik silme handler'i
-    const handleDeleteEvent = () => {
+    const handleDeleteEvent = async () => {
         if (selectedEvent) {
-            deleteEvent(selectedEvent.id);
-            setSelectedEvent(null);
+            try {
+                await deleteEvent(selectedEvent.id);
+                setSelectedEvent(null);
+                success('Etkinlik silindi');
+            } catch (err) {
+                showError('Etkinlik silinirken hata olustu');
+                console.error('Etkinlik silinirken hata:', err);
+            }
         }
     };
 
+    // Loading durumu
+    if (isLoading) {
+        return (
+            <div className="calendar">
+                <LoadingSpinner size="large" text="Etkinlikler yukleniyor..." />
+            </div>
+        );
+    }
+
     return (
         <div className="calendar">
+            {/* Hata mesajı */}
+            {error && (
+                <ErrorMessage
+                    message={error}
+                    onRetry={refresh}
+                    onDismiss={clearError}
+                />
+            )}
+
             <CalendarHeader
                 dateDisplay={formattedDate}
                 onNext={nextMonth}
@@ -103,6 +139,9 @@ export const Calendar: React.FC = () => {
                     />
                 )}
             </Modal>
+
+            {/* Toast Bildirimleri */}
+            <ToastContainer toasts={toasts} onClose={hideToast} />
         </div>
     );
 };

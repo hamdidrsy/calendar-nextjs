@@ -1,56 +1,117 @@
 "use client"
 
-import { useState } from 'react';
-import type { CalendarEvent } from '@/types';
+import { useState, useEffect, useCallback } from 'react'
+import type { CalendarEvent } from '@/types'
+import * as eventService from '@/services/eventService'
 
 /**
- * Etkinlik CRUD işlemleri için custom hook
+ * Etkinlik CRUD islemleri icin custom hook
+ * Artik API ile haberlesir
  */
 export const useEvents = () => {
-    // Etkinlikleri state olarak tutuyoruz
-    // useState ? React'te bir state değişkeni oluşturmak için kullanılan hook'tur.
-    const [events, setEvents] = useState<CalendarEvent[]>([]);
+    // State tanimlari
+    const [events, setEvents] = useState<CalendarEvent[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    // Etkinlikleri API'den yukle
+    const fetchEvents = useCallback(async () => {
+        try {
+            setIsLoading(true)
+            setError(null)
+            const data = await eventService.getEvents()
+            setEvents(data)
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Bir hata olustu')
+            console.error('Etkinlikler yuklenirken hata:', err)
+        } finally {
+            setIsLoading(false)
+        }
+    }, [])
+
+    // Component mount oldugunda etkinlikleri yukle
+    useEffect(() => {
+        fetchEvents()
+    }, [fetchEvents])
 
     // Etkinlik ekleme fonksiyonu
-    const addEvent = (event: CalendarEvent) => {
-        // Yeni etkinliği mevcut etkinlikler listesine ekle
-        setEvents(prevEvents => [...prevEvents, event]);
-        console.log('Etkinlik eklendi:', event.title);
-    };
+    const addEvent = async (event: Omit<CalendarEvent, 'id'>) => {
+        try {
+            setError(null)
+            const newEvent = await eventService.createEvent(event)
+            setEvents(prev => [...prev, newEvent])
+            console.log('Etkinlik eklendi:', newEvent.title)
+            return newEvent
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Etkinlik eklenemedi'
+            setError(message)
+            console.error('Etkinlik eklenirken hata:', err)
+            throw err
+        }
+    }
 
     // Etkinlik silme fonksiyonu
-    const deleteEvent = (eventId: string) => {
-        setEvents(prevEvents => prevEvents.filter(event => event.id !== eventId));
-        console.log('Etkinlik silindi:', eventId);
-    };
+    const deleteEvent = async (eventId: string) => {
+        try {
+            setError(null)
+            await eventService.deleteEvent(eventId)
+            setEvents(prev => prev.filter(event => event.id !== eventId))
+            console.log('Etkinlik silindi:', eventId)
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Etkinlik silinemedi'
+            setError(message)
+            console.error('Etkinlik silinirken hata:', err)
+            throw err
+        }
+    }
 
-    // Etkinlik güncelleme fonksiyonu
-    const updateEvent = (eventId: string, updates: Partial<CalendarEvent>) => {
-        setEvents(prevEvents =>
-            prevEvents.map(event =>
-                event.id === eventId ? { ...event, ...updates } : event
+    // Etkinlik guncelleme fonksiyonu
+    const updateEvent = async (eventId: string, updates: Partial<CalendarEvent>) => {
+        try {
+            setError(null)
+            const updatedEvent = await eventService.updateEvent(eventId, updates)
+            setEvents(prev =>
+                prev.map(event =>
+                    event.id === eventId ? updatedEvent : event
+                )
             )
-        );
-        console.log('Etkinlik güncellendi:', eventId);
-    };
+            console.log('Etkinlik guncellendi:', eventId)
+            return updatedEvent
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Etkinlik guncellenemedi'
+            setError(message)
+            console.error('Etkinlik guncellenirken hata:', err)
+            throw err
+        }
+    }
 
-    // Belirli bir güne ait etkinlikleri getir
+    // Belirli bir gune ait etkinlikleri getir
     const getEventsForDate = (date: Date): CalendarEvent[] => {
         return events.filter(event => {
-            const eventDate = new Date(event.startDate);
+            const eventDate = new Date(event.startDate)
             return (
                 eventDate.getFullYear() === date.getFullYear() &&
                 eventDate.getMonth() === date.getMonth() &&
                 eventDate.getDate() === date.getDate()
-            );
-        });
-    };
+            )
+        })
+    }
+
+    // Hatayi temizle
+    const clearError = () => setError(null)
+
+    // Yeniden yukle
+    const refresh = () => fetchEvents()
 
     return {
         events,
+        isLoading,
+        error,
         addEvent,
         deleteEvent,
         updateEvent,
-        getEventsForDate
-    };
-};
+        getEventsForDate,
+        clearError,
+        refresh
+    }
+}

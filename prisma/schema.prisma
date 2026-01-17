@@ -1,0 +1,28 @@
+// Prisma schema dosyasi
+// Dokumantasyon: https://pris.ly/d/prisma-schema
+
+// Generator: Prisma Client uretici
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Veritabani baglantisi
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Event (Etkinlik) Modeli
+model Event {
+  id          String   @id @default(cuid())    // Benzersiz ID (cuid formatinda)
+  title       String                            // Etkinlik basligi
+  description String?                           // Aciklama (opsiyonel)
+  date        DateTime                          // Tarih ve saat
+  startTime   String?                           // Baslangic saati (opsiyonel, "09:00" formatinda)
+  endTime     String?                           // Bitis saati (opsiyonel, "10:00" formatinda)
+  color       String   @default("#3788d8")     // Renk kodu
+  createdAt   DateTime @default(now())         // Olusturulma zamani
+  updatedAt   DateTime @updatedAt              // Guncellenme zamani
+
+  @@map("events")  // Veritabanindaki tablo adi
+}
