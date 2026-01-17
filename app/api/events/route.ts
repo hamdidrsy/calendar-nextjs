@@ -3,7 +3,9 @@ import prisma from '@/lib/prisma'
 
 // GET /api/events - Tum etkinlikleri getir
 export async function GET(request: NextRequest) {
+    console.log('API /api/events GET called')
     try {
+        console.log('Prisma query starting...')
         // URL parametrelerini al (opsiyonel filtreleme icin)
         const { searchParams } = new URL(request.url) // URL'den searchParams al
         const startDate = searchParams.get('startDate') // Baslangic tarihi
@@ -32,8 +34,9 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(events)
     } catch (error) {
         console.error('Events GET error:', error)
+        const errorMessage = error instanceof Error ? error.message : 'Bilinmeyen hata'
         return NextResponse.json(
-            { error: 'Etkinlikler getirilirken hata olustu' },
+            { error: 'Etkinlikler getirilirken hata olustu', details: errorMessage },
             { status: 500 }
         )
     }

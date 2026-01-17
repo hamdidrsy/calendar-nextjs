@@ -66,12 +66,14 @@ const API_URL = '/api/events'
  */
 export async function getEvents(): Promise<CalendarEvent[]> {
     const response = await fetch(API_URL)
+    const data = await response.json()
 
     if (!response.ok) {
-        throw new Error('Etkinlikler yuklenirken hata olustu')
+        console.error('API Error:', response.status, data)
+        throw new Error(data.error || 'Etkinlikler yuklenirken hata olustu')
     }
 
-    const apiEvents: ApiEvent[] = await response.json()
+    const apiEvents: ApiEvent[] = data
     return apiEvents.map(apiEventToCalendarEvent)
 }
 
