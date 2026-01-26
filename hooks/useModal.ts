@@ -17,7 +17,7 @@ export const useModal = (initialState = false) => {
     // Modal'ı kapat
     const close = useCallback(() => setIsOpen(false), []);
 
-    // Modal durumunu değiştir
+    // Tek bir buton ile aç/kapat işlemini yönetebilmek için
     const toggle = useCallback(() => setIsOpen(prev => !prev), []);
 
     return { isOpen, open, close, toggle };

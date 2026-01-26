@@ -18,6 +18,8 @@ export interface EventFormProps {
     selectedDate: Date;
     onSubmit: (event: CalendarEvent) => void;
     onCancel: () => void;
+    /** Duzenleme modu icin mevcut etkinlik */
+    event?: CalendarEvent;
 }
 
 /**
@@ -27,6 +29,7 @@ export interface EventDetailProps {
     event: CalendarEvent;
     onClose: () => void;
     onDelete: () => void;
+    onEdit: () => void;
 }
 
 /**

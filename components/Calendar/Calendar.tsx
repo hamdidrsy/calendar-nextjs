@@ -1,4 +1,4 @@
-"use client"
+"use client" // Bu bileşen istemci tarafında çalışır
 
 import React, { useState } from 'react';
 import { useCalendar, useEvents, useModal, useToast } from '@/hooks';
@@ -24,7 +24,7 @@ export const Calendar: React.FC = () => {
     } = useCalendar();
 
     // Etkinlik yönetimi hook'u
-    const { addEvent, deleteEvent, getEventsForDate, isLoading, error, clearError, refresh } = useEvents();
+    const { addEvent, deleteEvent, updateEvent, getEventsForDate, isLoading, error, clearError, refresh } = useEvents();
 
     // Toast bildirimleri
     const { toasts, hideToast, success, error: showError } = useToast();
@@ -33,6 +33,8 @@ export const Calendar: React.FC = () => {
     const addEventModal = useModal();
     // Seçili etkinlik state'i (detay modal için)
     const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+    // Duzenlenen etkinlik state'i (edit modal icin)
+    const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
 
     // Etkinlik ekleme handler'ı
     const handleAddEvent = async (event: CalendarEvent) => {
@@ -70,6 +72,26 @@ export const Calendar: React.FC = () => {
                 showError('Etkinlik silinirken hata olustu');
                 console.error('Etkinlik silinirken hata:', err);
             }
+        }
+    };
+
+    // Duzenleme modunu ac
+    const handleEditEvent = () => {
+        if (selectedEvent) {
+            setEditingEvent(selectedEvent);
+            setSelectedEvent(null); // Detay modal'i kapat
+        }
+    };
+
+    // Etkinlik guncelleme handler'i
+    const handleUpdateEvent = async (updatedEvent: CalendarEvent) => {
+        try {
+            await updateEvent(updatedEvent.id, updatedEvent);
+            setEditingEvent(null);
+            success('Etkinlik guncellendi!');
+        } catch (err) {
+            showError('Etkinlik guncellenirken hata olustu');
+            console.error('Etkinlik guncellenirken hata:', err);
         }
     };
 
@@ -129,13 +151,30 @@ export const Calendar: React.FC = () => {
             <Modal
                 isOpen={selectedEvent !== null}
                 onClose={() => setSelectedEvent(null)}
-                title="Etkinlik Detayı"
+                title="Etkinlik Detayi"
             >
                 {selectedEvent && (
                     <EventDetail
                         event={selectedEvent}
                         onClose={() => setSelectedEvent(null)}
                         onDelete={handleDeleteEvent}
+                        onEdit={handleEditEvent}
+                    />
+                )}
+            </Modal>
+
+            {/* Etkinlik Duzenleme Modal'i */}
+            <Modal
+                isOpen={editingEvent !== null}
+                onClose={() => setEditingEvent(null)}
+                title="Etkinligi Duzenle"
+            >
+                {editingEvent && (
+                    <EventForm
+                        selectedDate={new Date(editingEvent.startDate)}
+                        event={editingEvent}
+                        onSubmit={handleUpdateEvent}
+                        onCancel={() => setEditingEvent(null)}
                     />
                 )}
             </Modal>

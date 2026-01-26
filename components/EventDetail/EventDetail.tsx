@@ -4,7 +4,7 @@ import { formatDate, formatTime } from '@/utils';
 import type { EventDetailProps } from '@/types/props.types';
 import './EventDetail.css';
 
-export const EventDetail: React.FC<EventDetailProps> = ({ event, onClose, onDelete }) => {
+export const EventDetail: React.FC<EventDetailProps> = ({ event, onClose, onDelete, onEdit }) => {
     return (
         <div className="event-detail">
             <h3 className="event-detail-title">{event.title}</h3>
@@ -31,6 +31,9 @@ export const EventDetail: React.FC<EventDetailProps> = ({ event, onClose, onDele
             <div className="event-detail-actions">
                 <button className="btn-cancel" onClick={onClose}>
                     Kapat
+                </button>
+                <button className="btn-edit" onClick={onEdit}>
+                    Duzenle
                 </button>
                 <button className="btn-delete" onClick={onDelete}>
                     Sil

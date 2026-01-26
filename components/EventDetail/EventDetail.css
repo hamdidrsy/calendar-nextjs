@@ -52,6 +52,22 @@
     background-color: #e0e0e0;
 }
 
+.event-detail-actions .btn-edit {
+    background-color: #4a90d9;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.event-detail-actions .btn-edit:hover {
+    background-color: #357abd;
+}
+
 .event-detail-actions .btn-delete {
     background-color: #e74c3c;
     color: white;

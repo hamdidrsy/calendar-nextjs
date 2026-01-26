@@ -6,12 +6,28 @@ import type { EventFormProps } from '@/types/props.types';
 import { DEFAULT_START_TIME, DEFAULT_END_TIME } from '@/constants';
 import './EventForm.css';
 
-export const EventForm: React.FC<EventFormProps> = ({ selectedDate, onSubmit, onCancel }) => {
-    const [title, setTitle] = useState(''); // Etkinlik başlığı
-    const [description, setDescription] = useState(''); // Etkinlik açıklaması
-    const [startTime, setStartTime] = useState(DEFAULT_START_TIME); // Başlangıç saati
-    const [endTime, setEndTime] = useState(DEFAULT_END_TIME); // Bitiş saati
-    const [error, setError] = useState(''); // Hata mesajı
+// Date'den saat string'i cikar (HH:MM)
+const formatTimeFromDate = (date: Date): string => {
+    const d = new Date(date);
+    const hours = d.getHours().toString().padStart(2, '0');
+    const minutes = d.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+};
+
+export const EventForm: React.FC<EventFormProps> = ({ selectedDate, onSubmit, onCancel, event }) => {
+    // Edit mode kontrolu
+    const isEditMode = !!event;
+
+    // State'leri mevcut event degerleriyle veya default degerlerle baslat
+    const [title, setTitle] = useState(event?.title || '');
+    const [description, setDescription] = useState(event?.description || '');
+    const [startTime, setStartTime] = useState(
+        event ? formatTimeFromDate(event.startDate) : DEFAULT_START_TIME
+    );
+    const [endTime, setEndTime] = useState(
+        event ? formatTimeFromDate(event.endDate) : DEFAULT_END_TIME
+    );
+    const [error, setError] = useState('');
 
     // Benzersiz ID oluştur
     const generateId = () => {
@@ -35,23 +51,25 @@ export const EventForm: React.FC<EventFormProps> = ({ selectedDate, onSubmit, on
             return;
         }
 
-        const newEvent: CalendarEvent = {
-            id: generateId(),
+        const eventData: CalendarEvent = {
+            id: event?.id || generateId(), // Edit modda mevcut id'yi kullan
             title: title.trim(),
             description: description.trim() || undefined,
             startDate: combineDateTime(selectedDate, startTime),
             endDate: combineDateTime(selectedDate, endTime),
         };
 
-        console.log('Yeni etkinlik:', newEvent);
-        onSubmit(newEvent);
+        console.log(isEditMode ? 'Etkinlik guncelleniyor:' : 'Yeni etkinlik:', eventData);
+        onSubmit(eventData);
 
-        // Formu temizle
-        setTitle('');
-        setDescription('');
-        setStartTime(DEFAULT_START_TIME);
-        setEndTime(DEFAULT_END_TIME);
-        setError('');
+        // Sadece yeni etkinlik eklerken formu temizle
+        if (!isEditMode) {
+            setTitle('');
+            setDescription('');
+            setStartTime(DEFAULT_START_TIME);
+            setEndTime(DEFAULT_END_TIME);
+            setError('');
+        }
     };
 
     // Seçili tarihi formatla
@@ -123,7 +141,7 @@ export const EventForm: React.FC<EventFormProps> = ({ selectedDate, onSubmit, on
                     İptal
                 </button>
                 <button type="submit" className="btn-submit">
-                    Kaydet
+                    {isEditMode ? 'Guncelle' : 'Kaydet'}
                 </button>
             </div>
         </form>
