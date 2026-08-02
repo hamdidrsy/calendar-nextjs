@@ -16,9 +16,29 @@ export interface ApiEvent {
 // API Base URL
 export const API_URL = '/api/events'
 
+function parseDateOnly(value: string): Date {
+    const [year, month, day] = value.slice(0, 10).split('-').map(Number)
+    return new Date(year, month - 1, day)
+}
+
+function formatDateOnly(value: Date): string {
+    const date = new Date(value)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+}
+
+function formatLocalTime(value: Date): string {
+    const date = new Date(value)
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${hours}:${minutes}`
+}
+
 // API Event'i Frontend CalendarEvent'e donustur
 export function apiEventToCalendarEvent(apiEvent: ApiEvent): CalendarEvent {
-    const date = new Date(apiEvent.date)
+    const date = parseDateOnly(apiEvent.date)
 
     // startDate olustur
     const startDate = new Date(date)
@@ -54,9 +74,9 @@ export function calendarEventToApiFormat(event: Omit<CalendarEvent, 'id'> & { id
     return {
         title: event.title,
         description: event.description || null,
-        date: startDate.toISOString(),
-        startTime: startDate.toTimeString().slice(0, 5), // "HH:MM" formati
-        endTime: new Date(event.endDate).toTimeString().slice(0, 5),
+        date: formatDateOnly(startDate),
+        startTime: formatLocalTime(startDate),
+        endTime: formatLocalTime(event.endDate),
         color: event.color || '#3788d8'
     }
 }

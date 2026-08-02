@@ -45,7 +45,7 @@ export const useEventActions = ({ setEvents, setError }: UseEventActionsProps) =
     }, [setEvents, setError])
 
     // Etkinlik guncelleme
-    const updateEvent = useCallback(async (eventId: string, updates: Partial<CalendarEvent>) => {
+    const updateEvent = useCallback(async (eventId: string, updates: CalendarEvent) => {
         try {
             setError(null)
             const updatedEvent = await eventService.updateEvent(eventId, updates)

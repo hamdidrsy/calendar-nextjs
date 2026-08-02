@@ -6,14 +6,14 @@ import { API_URL, ApiEvent, apiEventToCalendarEvent, calendarEventToApiFormat } 
  */
 export async function updateEvent(
     id: string,
-    updates: Partial<CalendarEvent>
+    updates: CalendarEvent
 ): Promise<CalendarEvent> {
     const response = await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(calendarEventToApiFormat(updates as CalendarEvent))
+        body: JSON.stringify(calendarEventToApiFormat(updates))
     })
 
     if (!response.ok) {

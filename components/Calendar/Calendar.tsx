@@ -39,8 +39,14 @@ export const Calendar: React.FC = () => {
     // Etkinlik ekleme handler'ı
     const handleAddEvent = async (event: CalendarEvent) => {
         try {
-            // id hariç event bilgilerini gönder (API id'yi oluşturacak)
-            const { id, ...eventData } = event;
+            // ID sunucuda oluşturulur.
+            const eventData: Omit<CalendarEvent, 'id'> = {
+                title: event.title,
+                description: event.description,
+                startDate: event.startDate,
+                endDate: event.endDate,
+                color: event.color,
+            };
             await addEvent(eventData);
             addEventModal.close();
             success('Etkinlik basariyla eklendi!');

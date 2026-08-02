@@ -6,18 +6,6 @@
 //as const ifadesi, TypeScript'e bu dizinin elemanlarının değiştirilemez olduğunu belirtir.
 export const WEEK_DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'] as const;
 
-// Hafta günleri (uzun)
-export const WEEK_DAYS_FULL = [
-    'Pazartesi', 'Salı', 'Çarşamba',
-    'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'
-] as const;
-
-// Ay isimleri
-export const MONTHS = [
-    'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
-] as const;
-
 // Form varsayılan değerleri
 export const DEFAULT_START_TIME = '09:00';
 export const DEFAULT_END_TIME = '15:00';

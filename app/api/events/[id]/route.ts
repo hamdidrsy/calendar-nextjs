@@ -1,118 +1,84 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { getServerEnv } from '@/lib/env'
+import {
+  dateOnlyToUtc,
+  RequestValidationError,
+  validateEventInput,
+} from '@/lib/eventValidation'
 
-// Route parametrelerinin tipi
 type RouteParams = {
-    params: Promise<{ id: string }>
+  params: Promise<{ id: string }>
 }
 
-// GET /api/events/[id] - Tek etkinlik getir
-export async function GET(
-    request: NextRequest,
-    { params }: RouteParams
-) {
-    try {
-        const { id } = await params
-
-        const event = await prisma.event.findUnique({
-            where: { id }
-        })
-
-        if (!event) {
-            return NextResponse.json(
-                { error: 'Etkinlik bulunamadi' },
-                { status: 404 }
-            )
-        }
-
-        return NextResponse.json(event)
-    } catch (error) {
-        console.error('Event GET error:', error)
-        return NextResponse.json(
-            { error: 'Etkinlik getirilirken hata olustu' },
-            { status: 500 }
-        )
-    }
+function validationResponse(error: RequestValidationError) {
+  return NextResponse.json(
+    { error: error.message, details: error.details },
+    { status: 400 }
+  )
 }
 
-// PUT /api/events/[id] - Etkinlik guncelle
-export async function PUT(
-    request: NextRequest,
-    { params }: RouteParams
-) {
-    try {
-        const { id } = await params
-        const body = await request.json()
+export async function GET(_request: NextRequest, { params }: RouteParams) {
+  try {
+    getServerEnv()
+    const { id } = await params
+    const event = await prisma.event.findUnique({ where: { id } })
 
-        // Etkinligin var olup olmadigini kontrol et
-        const existingEvent = await prisma.event.findUnique({
-            where: { id }
-        })
-
-        if (!existingEvent) {
-            return NextResponse.json(
-                { error: 'Etkinlik bulunamadi' },
-                { status: 404 }
-            )
-        }
-
-        // Etkinligi guncelle
-        const updatedEvent = await prisma.event.update({
-            where: { id },
-            data: {
-                title: body.title ?? existingEvent.title,
-                description: body.description ?? existingEvent.description,
-                date: body.date ? new Date(body.date) : existingEvent.date,
-                startTime: body.startTime ?? existingEvent.startTime,
-                endTime: body.endTime ?? existingEvent.endTime,
-                color: body.color ?? existingEvent.color
-            }
-        })
-
-        return NextResponse.json(updatedEvent)
-    } catch (error) {
-        console.error('Event PUT error:', error)
-        return NextResponse.json(
-            { error: 'Etkinlik guncellenirken hata olustu' },
-            { status: 500 }
-        )
+    if (!event) {
+      return NextResponse.json({ error: 'Etkinlik bulunamadı.' }, { status: 404 })
     }
+
+    return NextResponse.json(event)
+  } catch (error) {
+    console.error('Etkinlik getirilemedi:', error)
+    return NextResponse.json({ error: 'Etkinlik getirilemedi.' }, { status: 500 })
+  }
 }
 
-// DELETE /api/events/[id] - Etkinlik sil
-export async function DELETE(
-    request: NextRequest,
-    { params }: RouteParams
-) {
-    try {
-        const { id } = await params
+export async function PUT(request: NextRequest, { params }: RouteParams) {
+  try {
+    getServerEnv()
+    const { id } = await params
+    const input = validateEventInput(await request.json())
+    const existingEvent = await prisma.event.findUnique({ where: { id } })
 
-        // Etkinligin var olup olmadigini kontrol et
-        const existingEvent = await prisma.event.findUnique({
-            where: { id }
-        })
-
-        if (!existingEvent) {
-            return NextResponse.json(
-                { error: 'Etkinlik bulunamadi' },
-                { status: 404 }
-            )
-        }
-
-        // Etkinligi sil
-        await prisma.event.delete({
-            where: { id }
-        })
-
-        return NextResponse.json(
-            { message: 'Etkinlik basariyla silindi' },
-            { status: 200 }
-        )
-    } catch (error) {
-        console.error('Event DELETE error:', error)
-        return NextResponse.json(
-            { error: 'Etkinlik silinirken hata olustu' },
-            { status: 500 }
-        )
+    if (!existingEvent) {
+      return NextResponse.json({ error: 'Etkinlik bulunamadı.' }, { status: 404 })
     }
+
+    const event = await prisma.event.update({
+      where: { id },
+      data: {
+        ...input,
+        date: dateOnlyToUtc(input.date),
+      },
+    })
+
+    return NextResponse.json(event)
+  } catch (error) {
+    if (error instanceof RequestValidationError) return validationResponse(error)
+    if (error instanceof SyntaxError) {
+      return NextResponse.json({ error: 'Geçerli bir JSON gövdesi gönderin.' }, { status: 400 })
+    }
+    console.error('Etkinlik güncellenemedi:', error)
+    return NextResponse.json({ error: 'Etkinlik güncellenemedi.' }, { status: 500 })
+  }
+}
+
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+  try {
+    getServerEnv()
+    const { id } = await params
+    const existingEvent = await prisma.event.findUnique({ where: { id } })
+
+    if (!existingEvent) {
+      return NextResponse.json({ error: 'Etkinlik bulunamadı.' }, { status: 404 })
+    }
+
+    await prisma.event.delete({ where: { id } })
+    return NextResponse.json({ message: 'Etkinlik başarıyla silindi.' })
+  } catch (error) {
+    console.error('Etkinlik silinemedi:', error)
+    return NextResponse.json({ error: 'Etkinlik silinemedi.' }, { status: 500 })
+  }
 }

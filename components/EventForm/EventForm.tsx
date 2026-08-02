@@ -47,7 +47,22 @@ export const EventForm: React.FC<EventFormProps> = ({ selectedDate, onSubmit, on
 
         // Validasyon
         if (!title.trim()) {
-            setError('Başlık zorunludur');
+            setError('Başlık zorunludur.');
+            return;
+        }
+
+        if (title.trim().length > 120) {
+            setError('Başlık en fazla 120 karakter olabilir.');
+            return;
+        }
+
+        if (description.trim().length > 2000) {
+            setError('Açıklama en fazla 2000 karakter olabilir.');
+            return;
+        }
+
+        if (endTime <= startTime) {
+            setError('Bitiş saati başlangıç saatinden sonra olmalıdır.');
             return;
         }
 
@@ -99,6 +114,7 @@ export const EventForm: React.FC<EventFormProps> = ({ selectedDate, onSubmit, on
                         setError('');
                     }}
                     placeholder="Etkinlik başlığı"
+                    maxLength={120}
                     autoFocus
                 />
             </div>
@@ -111,6 +127,7 @@ export const EventForm: React.FC<EventFormProps> = ({ selectedDate, onSubmit, on
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Etkinlik açıklaması (opsiyonel)"
                     rows={3}
+                    maxLength={2000}
                 />
             </div>
 
